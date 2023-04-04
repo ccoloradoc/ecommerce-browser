@@ -38,8 +38,8 @@ export default function Card({ item }) {
         backgroundRepeat: "no-repeat",
         backgroundColor: "white"
     }
-    const isLongTitle = item.title.length > 39
-    const title = item.title.substring(0, isLongTitle ? 39 : item.title.length) + (isLongTitle ? '...' : '')
+    const isLongTitle = item.title.length > 35
+    const title = item.title.substring(0, isLongTitle ? 35 : item.title.length) + (isLongTitle ? '...' : '')
     const availableAtText = moment(item.availableAt).tz('America/Mexico_City').format("Do [de] MMMM [a las] h:mmA")
     const lastSubmitedAtText = moment(item.lastSubmitedAt).tz('America/Mexico_City').format("Do [de] MMMM [a las] h:mmA")
 

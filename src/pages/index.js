@@ -1,6 +1,6 @@
 import Navbar from 'browser/components/navbar'
 import StackItem from 'browser/components/stack-item'
-import { getSession, signOut } from "next-auth/react"
+import { getServerSession } from "next-auth/next"
 import ItemService from 'browser/service/ItemService'
 
 export default function Example({ user, stores }) {
@@ -27,10 +27,13 @@ export default function Example({ user, stores }) {
   )
 }
 
-export async function getServerSideProps({ req }) {
-  const session = await getSession({ req });
+export async function getServerSideProps({ req, res }) {
+  const session = await getServerSession(
+    req,
+    res
+  )
 
-  if (!session) {
+  if (!session || !session.user) {
     return {
       redirect: { destination: "/signin" },
     };

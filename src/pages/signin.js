@@ -1,4 +1,6 @@
-import { getCsrfToken, getSession } from "next-auth/react"
+import { getServerSession } from "next-auth/next"
+import { getCsrfToken } from "next-auth/react"
+import { authOptions } from "./api/auth/[...nextauth]"
 import { LockClosedIcon } from '@heroicons/react/20/solid'
 
 export default function Login({ csrfToken }) {
@@ -36,8 +38,11 @@ export default function Login({ csrfToken }) {
 }
 
 export async function getServerSideProps(context) {
-  const { req } = context;
-  const session = await getSession({ req });
+  const session = await getServerSession(
+    context.req,
+    context.res,
+    authOptions
+  )
 
   if (session) {
     return {
@@ -46,8 +51,6 @@ export async function getServerSideProps(context) {
   }
 
   const csrfToken = await getCsrfToken(context)
-
-  console.log(csrfToken)
 
   return {
     props: {

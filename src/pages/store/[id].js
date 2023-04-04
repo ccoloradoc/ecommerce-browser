@@ -1,8 +1,8 @@
 import Navbar from 'browser/components/navbar'
 import Search from 'browser/components/search'
 import Card from 'browser/components/card'
-import { useEffect, useState } from 'react';
-import { getSession } from "next-auth/react"
+import { useEffect } from 'react';
+import { getServerSession } from "next-auth/next"
 import useStore from "browser/state/store"
 import ItemService from 'browser/service/ItemService'
 
@@ -45,10 +45,13 @@ export default function StorePage(props) {
   )
 }
 
-export async function getServerSideProps({ req, query }) {
-  const session = await getSession({ req });
+export async function getServerSideProps({ req, res, query }) {
+  const session = await getServerSession(
+    req,
+    res
+  )
 
-  if (!session) {
+  if (!session || !session.user) {
     return {
       redirect: { destination: "/signin" },
     };

@@ -29,22 +29,43 @@ function Availability({ available }) {
     )
 }
 
-function Addendum({price, originalPrice, threshold}) {
-    if(price < threshold) {
+function Addendum({ price, originalPrice, threshold }) {
+    if (price < threshold) {
         return (
             <span className={`uppercase text-xs rounded font-medium select-none pl-3 pr-3 bg-red-50 p-0.5 border-red-500 border text-red-700`}>
-                deal {Math.ceil(100 - (price * 100 / originalPrice))} %
+                super deal {Math.ceil(100 - (price * 100 / originalPrice))} %
             </span>
         )
-    } else if(price < originalPrice) {
+    } else if (price < originalPrice) {
         return (
             <span className={`uppercase text-xs rounded font-medium select-none pl-3 pr-3 bg-orange-50 p-0.5 border-orange-500 border text-orange-700`}>
                 discount {Math.ceil(100 - (price * 100 / originalPrice))} %
             </span>
         )
     }
-    
+
     return (<></>)
+}
+
+function CardFooter({ availableAt, lastSubmitedAt, createdAt }) {
+    const createdAtText = moment(createdAt).tz('America/Mexico_City').format("Do [de] MMMM 'YY [a las] h:mmA")
+    const availableAtText = moment(availableAt).tz('America/Mexico_City').format("Do [de] MMMM [a las] h:mmA")
+    const lastSubmitedAtText = moment(lastSubmitedAt).tz('America/Mexico_City').format("Do [de] MMMM [a las] h:mmA")
+    return (
+        <div className="w-full mt-4">
+            <p className="text-gray-400 font-light text-xs">
+                <span className="font-semibold">Created: </span> {createdAtText}
+            </p>
+            <p className="text-gray-400 font-light text-xs">
+                <span className="font-semibold">Available At: </span> {availableAtText}
+            </p>
+
+            <p className="text-gray-400 font-light text-xs">
+                <span className="font-semibold">Submitted At: </span> {lastSubmitedAtText}
+            </p>
+
+        </div>
+    )
 }
 
 export default function Card({ item }) {
@@ -58,8 +79,6 @@ export default function Card({ item }) {
     }
     const isLongTitle = item.title.length > 35
     const title = item.title.substring(0, isLongTitle ? 35 : item.title.length) + (isLongTitle ? '...' : '')
-    const availableAtText = moment(item.availableAt).tz('America/Mexico_City').format("Do [de] MMMM [a las] h:mmA")
-    const lastSubmitedAtText = moment(item.lastSubmitedAt).tz('America/Mexico_City').format("Do [de] MMMM [a las] h:mmA")
 
     return (
         <div className="bg-white shadow rounded mb-3" data-price={item.price} data-original-price={item.originalPrice}>
@@ -91,11 +110,14 @@ export default function Card({ item }) {
                     ${item.price}
                 </p>
                 <div className="inline-flex items-center mt-2">
-                    <input type="text" name="price" id="price" 
+                    <span className={`block uppercase text-xs rounded font-medium select-none  bg-blue-50 p-1.5 border-blue-500 border text-blue-700 mr-3`}>
+                        {Math.ceil(100 - (item.threshold * 100 / item.originalPrice))}%
+                    </span>
+                    <input type="text" name="price" id="price"
                         className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="0.00"
-                        value={item.threshold} 
-                        onChange={(ev) => updateItem(item.id, { threshold: ev.target.value})}
-                        />
+                        value={item.threshold}
+                        onChange={(ev) => updateItem(item.id, { threshold: ev.target.value })}
+                    />
                     <button className="bg-white rounded-r border text-gray-600 ml-4 hover:bg-gray-100 active:bg-gray-200 disabled:opacity-50 inline-flex items-center px-2 py-1 border-r border-gray-200"
                         onClick={(ev) => saveItem(item.id, { threshold: item.threshold })}>
                         <svg fill="none" className="h-6 w-4" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -103,24 +125,7 @@ export default function Card({ item }) {
                         </svg>
                     </button>
                 </div>
-                <button className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 active:bg-blue-700 disabled:opacity-50 mt-4 w-full flex items-center justify-center">
-                    Edit
-                    <svg fill="none" className="h-6 w-6 ml-2" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path>
-                    </svg>
-                </button>
-                <div className="flex justify-between w-full mt-4">
-                    <div className="flex items-center text-gray-500">
-                        <p className="text-gray-400 font-light text-xs text-center">
-                            <span className="font-semibold">Available At: </span> {availableAtText}
-                        </p>
-                    </div>
-                    <div>
-                        <p className="text-gray-400 font-light text-xs text-center">
-                            <span className="font-semibold">Submitted At: </span> {lastSubmitedAtText}
-                        </p>
-                    </div>
-                </div>
+                <CardFooter {...item} />
             </div>
         </div>
     )

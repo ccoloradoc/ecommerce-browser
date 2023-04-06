@@ -10,3 +10,7 @@ services:
       - ./:/home/browser
     environment:
       NODE_ENV: "production"
+      NEXTAUTH_SECRET: 4815162342
+      NEXT_PUBLIC_GITHUB_ID: <github_id>
+      NEXT_PUBLIC_GITHUB_SECRET: <github_secret>
+      NEXT_PUBLIC_MONGODB_URI: <database>

@@ -45,7 +45,24 @@ export default {
         return JSON.parse(
             JSON.stringify(
                 items.map((doc) => {
-                    return doc.toObject()
+                    return {
+                        id: doc.id,
+                        source: doc.source,
+                        available: doc.available,
+                        createdAt: doc.createdAt,
+                        image: doc.image,
+                        link: doc.link,
+                        price: doc.price,
+                        title: doc.title + '',
+                        updatedAt: doc.updatedAt,
+                        store: doc.store,
+                        alarm: doc.alarm,
+                        availableAt: doc.availableAt,
+                        threshold: doc.threshold,
+                        lastSubmitedAt: doc.lastSubmitedAt,
+                        originalPrice: doc.originalPrice,
+                        silent: doc.silent
+                    }
                 })
             )
         )

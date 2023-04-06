@@ -5,6 +5,7 @@ let filter = {
     text: '',
     available: true,
     alarm: true,
+    discount: false,
     deal: false,
     super: false,
     price: true
@@ -22,8 +23,12 @@ function filterItems(allItems, filters) {
     let items =  allItems
         .filter(item =>  item.available == filters.available)
         .filter(item =>  item.alarm == filters.alarm)
-        .filter(item =>  item.title.toLowerCase().indexOf(filters.text.toLowerCase()) >= 0)
+        .filter(item =>  (item.title  || '').toLowerCase().indexOf(filters.text.toLowerCase()) >= 0)
 
+   
+    if(filters.discount) {
+        items = items.filter(item => item.price < item.originalPrice)
+    } 
     if(filters.super) { 
         items = items.filter(item => item.price < item.threshold)
     }
@@ -51,6 +56,7 @@ function update(items, id, item) {
 const storeStore = create((set, get) => ({
     ...initialState,
     updateFilter: async (params) => { 
+        console.log('filter', params)
         set(state => ({
             ...state,
             filter: {

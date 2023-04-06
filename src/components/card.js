@@ -29,6 +29,24 @@ function Availability({ available }) {
     )
 }
 
+function Addendum({price, originalPrice, threshold}) {
+    if(price < threshold) {
+        return (
+            <span className={`uppercase text-xs rounded font-medium select-none pl-3 pr-3 bg-red-50 p-0.5 border-red-500 border text-red-700`}>
+                deal {Math.ceil(100 - (price * 100 / originalPrice))} %
+            </span>
+        )
+    } else if(price < originalPrice) {
+        return (
+            <span className={`uppercase text-xs rounded font-medium select-none pl-3 pr-3 bg-orange-50 p-0.5 border-orange-500 border text-orange-700`}>
+                discount {Math.ceil(100 - (price * 100 / originalPrice))} %
+            </span>
+        )
+    }
+    
+    return (<></>)
+}
+
 export default function Card({ item }) {
     const { data: session } = useSession()
     const { saveItem, updateItem } = useStore((state) => state)
@@ -44,7 +62,7 @@ export default function Card({ item }) {
     const lastSubmitedAtText = moment(item.lastSubmitedAt).tz('America/Mexico_City').format("Do [de] MMMM [a las] h:mmA")
 
     return (
-        <div className="bg-white shadow rounded mb-3">
+        <div className="bg-white shadow rounded mb-3" data-price={item.price} data-original-price={item.originalPrice}>
             <div style={imageStyles} className="h-96 w-full bg-gray-200 flex flex-col justify-between p-4 bg-cover bg-center">
                 <div className="flex justify-between">
                     <a className="text-black hover:text-blue-500" href={item.link} target="_blank">
@@ -56,8 +74,9 @@ export default function Card({ item }) {
                         <BellIcon on={item.alarm} />
                     </a>
                 </div>
-                <div>
+                <div className="flex justify-between">
                     <Availability available={item.available} />
+                    <Addendum {...item} />
                 </div>
             </div>
             <div className="p-4 flex flex-col items-center">
@@ -72,9 +91,6 @@ export default function Card({ item }) {
                     ${item.price}
                 </p>
                 <div className="inline-flex items-center mt-2">
-                    {/* <div className="bg-gray-100 border-t border-b border-gray-100 text-gray-600 hover:bg-gray-100 inline-flex items-center px-4 py-1 select-none">
-                        {item.threshold}
-                    </div> */}
                     <input type="text" name="price" id="price" 
                         className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="0.00"
                         value={item.threshold} 

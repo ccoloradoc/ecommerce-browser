@@ -16,6 +16,7 @@ export default function Example({ user, stores }) {
                 key={store.name}
                 title={store.name}
                 dek={`${store.count} monitored items`}
+                active={store.active}
                 link={`/store/${store.name.toLowerCase()}`}
                 />
             ))}

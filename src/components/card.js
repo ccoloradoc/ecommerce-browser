@@ -1,4 +1,5 @@
 import { useSession } from "next-auth/react"
+import LineGraph from "browser/components/line-graph"
 import useStore from "browser/state/store"
 import moment from "moment-timezone"
 
@@ -81,7 +82,11 @@ export default function Card({ item }) {
     const title = item.title.substring(0, isLongTitle ? 35 : item.title.length) + (isLongTitle ? '...' : '')
 
     return (
-        <div className="bg-white shadow rounded mb-3" data-price={item.price} data-original-price={item.originalPrice}>
+        <div className="bg-white shadow rounded mb-3"
+                data-id={item.id}
+                data-title={item.title} 
+                data-price={item.price} 
+                data-original-price={item.originalPrice}>
             <div style={imageStyles} className="h-96 w-full bg-gray-200 flex flex-col justify-between p-4 bg-cover bg-center">
                 <div className="flex justify-between">
                     <a className="text-black hover:text-blue-500" href={item.link} target="_blank">
@@ -125,6 +130,7 @@ export default function Card({ item }) {
                         </svg>
                     </button>
                 </div>
+                <LineGraph {...item} />
                 <CardFooter {...item} />
             </div>
         </div>

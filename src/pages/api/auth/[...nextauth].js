@@ -14,15 +14,16 @@ export const authOptions = {
     async jwt({ token, user }) {
       // console.log('jwt', token, user)
       if (user && user.email == '100332966@alumnos.uc3m.es') {
-        token.role = user.role = 'admino';
+        token.role = user.role = 'admin';
       }
       return token;
     },
     session({ session, token }) {
-      // console.log('session', token, session)
+      
       if (token && session.user && session.user.email == '100332966@alumnos.uc3m.es') {
-        session.user.role = token.role = 'admino'; 
+        session.user.role = 'admin'; 
       }
+      // console.log('session', token, session)
       return session;
     },
   }

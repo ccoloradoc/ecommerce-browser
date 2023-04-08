@@ -1,6 +1,9 @@
+import moment from "moment-timezone"
 
+// moment.locale('es-m//x');
 
-export default function StackItem({ title, dek, link }) {
+export default function StackItem({ title, dek, link, active }) {
+    const availableAtText = moment(active).tz('America/Mexico_City').format("YYYY-MM-DD HH:mm:ss")
     return (
 
         <li key={title} className="border-b-2 border-gray-100">
@@ -10,6 +13,9 @@ export default function StackItem({ title, dek, link }) {
                     <div className="space-y-1">
                         <p className="text-base text-gray-700 font-bold tracking-wide">{title}</p>
                         <p className="text-sm text-gray-500 font-medium">{dek}</p>
+                        <p className="text-gray-400 font-light text-xs">
+                            <span className="font-semibold">Last Fetch: </span> {availableAtText}
+                        </p>
                     </div>
                 </div>
                 <div className="pr-4 flex flex-col justify-between items-end">

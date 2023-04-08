@@ -1,13 +1,25 @@
 import Item from 'browser/model/item'
 import dbConnect from 'browser/model/dbConnect'
 
+function cleanDate(date) {
+    return JSON.stringify(date).replaceAll("\"", "")
+}
+
 export default {
     findStores: async function () {
         await dbConnect()
         const sources = await Item.collection.aggregate([
             {
+                $match: { 
+                    "availableAt": {
+                        $gte: new Date(2022, 12, 1)
+                    }
+                }
+            },
+            {
                 $group: {
                     _id: '$source',
+                    active: { $max: '$availableAt'},
                     count: { $sum: 1 }
                 }
             },
@@ -17,7 +29,7 @@ export default {
 
         return JSON.parse(
             JSON.stringify(
-                sources.map(item => { return { name: item._id, count: item.count } })
+                sources.map(item => { return { name: item._id, count: item.count, active: item.active } })
             )
         )
     },
@@ -38,34 +50,47 @@ export default {
             ...query,
             source: { 
                 $regex : new RegExp(query.source, "i") 
-            } 
+            },
+            availableAt: {
+                $gte: new Date(2022, 12, 1), 
+            }
         })
         .sort({price: 1})
 
-        return JSON.parse(
-            JSON.stringify(
-                items.map((doc) => {
-                    return {
-                        id: doc.id,
-                        source: doc.source,
-                        available: doc.available,
-                        createdAt: doc.createdAt,
-                        image: doc.image,
-                        link: doc.link,
-                        price: doc.price,
-                        title: doc.title + '',
-                        updatedAt: doc.updatedAt,
-                        store: doc.store,
-                        alarm: doc.alarm,
-                        availableAt: doc.availableAt,
-                        threshold: doc.threshold,
-                        lastSubmitedAt: doc.lastSubmitedAt,
-                        originalPrice: doc.originalPrice,
-                        silent: doc.silent
-                    }
-                })
-            )
-        )
+        let flatItems = []
+        for(var i = 0; i < items.length; i++) {
+            let item = items[i]
+            let flatItem = {
+                id: item.id,
+                source: item.source,
+                available: item.available,
+                createdAt: cleanDate(item.createdAt),
+                image: item.image,
+                link: item.link,
+                price: item.price,
+                title: item.title + '',
+                store: item.store,
+                alarm: item.alarm,
+                availableAt: cleanDate(item.availableAt),
+                threshold: item.threshold || 0,
+                lastSubmitedAt: cleanDate(item.lastSubmitedAt),
+                originalPrice: item.originalPrice,
+                silent: item.silent,
+                historical: []
+            }
+            if(item.historical) {
+                for(var j = 0; j < item.historical.length; j++) {
+                    let pair = item.historical[j]
+                    flatItem.historical.push({
+                        date: cleanDate(pair.date),
+                        value: pair.value
+                    })
+                }
+            }
+            flatItems.push(flatItem)
+        }
+
+        return flatItems;
     },
 
     save: async function(id, item) {

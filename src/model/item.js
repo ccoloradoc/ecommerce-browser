@@ -17,7 +17,8 @@ const itemSchema = mongoose.Schema({
 	silent: Boolean,	/* Should we notify the next time?  */
 	threshold: Number,
 	availableAt: Date,
-	lastSubmitedAt: Date
+	lastSubmitedAt: Date,
+	historical: Array
 }, {
 	timestamps: true
 });

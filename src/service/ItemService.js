@@ -2,7 +2,7 @@ import Item from 'browser/model/item'
 import dbConnect from 'browser/model/dbConnect'
 
 function cleanDate(date) {
-    return JSON.stringify(date).replaceAll("\"", "")
+    return JSON.stringify(date).replace(/\"/g, "")
 }
 
 export default {

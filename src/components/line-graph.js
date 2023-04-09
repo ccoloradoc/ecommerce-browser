@@ -58,7 +58,7 @@ function createOptions(suggestedMax, price) {
     scales: {
       y: {
         display: false,
-        suggestedMin: price/2,
+        suggestedMin: price - (price /4),
         suggestedMax: suggestedMax
       },
       x: {
@@ -75,9 +75,9 @@ function createOptions(suggestedMax, price) {
 }
 
 export default function LineGraph({ id, originalPrice, price, historical }) {
-  if (historical && historical.length > 1) {
-    let data = []
+  if (historical && historical.length >= 1) {
     let labels = []
+    let data = []
     // let previous = {
     //   value: historical[0].value,
     //   date: moment(historical[0].date)
@@ -95,6 +95,10 @@ export default function LineGraph({ id, originalPrice, price, historical }) {
       labels.push(moment(element.date).tz('America/Mexico_City').format("DD/MMMM HH:mm"))
       data.push(element.value)
     });
+
+    // Tail
+    labels.push(moment(new Date()).tz('America/Mexico_City').format("DD/MMMM HH:mm"))
+    data.push(price)
 
     let dataParam = {
       labels,

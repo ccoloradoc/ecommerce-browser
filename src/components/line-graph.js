@@ -26,54 +26,55 @@ ChartJS.register(
   Filler
 );
 
-export const options = {
-  responsive: true,
-  maintainAspectRatio: false,
-  interaction: {
-    intersect: false,
-    axis: 'x'
-  },
-  plugins: {
-    legend: {
-      display: false,
+function createOptions(suggestedMax, price) {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: {
+      intersect: false,
+      axis: 'x'
     },
-    title: {
-      display: false,
-    },
-  },
-  elements: {
-    line: {
-      tension: 0,
-      borderWidth: 2,
-      borderColor: "#12b5d2",
-      fill: "start",
-      backgroundColor: "#bbf0f3",
-    },
-    point: {
-      radius: 2,
-      hitRadius: 5,
-    },
-  },
-  scales: {
-    y: {
-      display: false,
-    },
-    x: {
-      display: true,
-      ticks: {
-        display: true,
+    plugins: {
+      legend: {
+        display: false,
       },
-      grid: {
+      title: {
         display: false,
       },
     },
-  },
-};
+    elements: {
+      line: {
+        tension: 0,
+        borderWidth: 2,
+        borderColor: "#12b5d2",
+        fill: "start",
+        backgroundColor: "#bbf0f3",
+      },
+      point: {
+        radius: 2,
+        hitRadius: 5,
+      },
+    },
+    scales: {
+      y: {
+        display: false,
+        suggestedMin: price/2,
+        suggestedMax: suggestedMax
+      },
+      x: {
+        display: true,
+        ticks: {
+          display: true,
+        },
+        grid: {
+          display: false,
+        },
+      },
+    },
+  }
+}
 
-const mockLabels = ["A", "B"];
-export const mockData = [10, 15, 20, 12, 24, 17, 15, 22]
-
-export default function LineGraph({ id, price, historical }) {
+export default function LineGraph({ id, originalPrice, price, historical }) {
   if (historical && historical.length > 1) {
     let data = []
     let labels = []
@@ -102,6 +103,8 @@ export default function LineGraph({ id, price, historical }) {
         stepped: true,
       }]
     };
+
+    const options = createOptions(originalPrice, price)
 
     return (
       <div className="w-full h-24 mt-10 divide-y divide-blue-200">

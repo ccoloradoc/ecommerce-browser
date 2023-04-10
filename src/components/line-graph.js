@@ -92,12 +92,12 @@ export default function LineGraph({ id, originalPrice, price, historical }) {
       //   data.pop()
       // }
 
-      labels.push(moment(element.date).tz('America/Mexico_City').format("DD/MMMM HH:mm"))
+      labels.push(moment(element.date).tz('America/Mexico_City').format("D/MMM HH") + 'h')
       data.push(element.value)
     });
 
     // Tail
-    labels.push(moment(new Date()).tz('America/Mexico_City').format("DD/MMMM HH:mm"))
+    labels.push(moment(new Date()).tz('America/Mexico_City').format("D/MMM HH") + 'h')
     data.push(price)
 
     let dataParam = {

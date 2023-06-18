@@ -15,7 +15,7 @@ export default {
             {
                 $match: {
                     "createdAt": {
-                        $gte: new Date(2022, 12, 1)
+                        $gte: new Date(2022, 1, 1)
                     }
                 }
             },
@@ -77,7 +77,7 @@ export default {
             }
         } else {
             filter['createdAt'] = {
-                $gte:  new Date(2022, 12, 1)
+                $gte:  new Date(2022, 1, 1)
             }
         }
         console.log('Query', filter)

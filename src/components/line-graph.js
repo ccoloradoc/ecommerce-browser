@@ -74,41 +74,37 @@ function createOptions(suggestedMax, price) {
   }
 }
 
-export default function LineGraph({ id, originalPrice, price, historical }) {
+export default function LineGraph({ id, originalPrice, price, historical, threshold }) {
   if (historical && historical.length >= 1) {
     let labels = []
     let data = []
-    // let previous = {
-    //   value: historical[0].value,
-    //   date: moment(historical[0].date)
-    // }
-    // labels.push(previous.date.tz('America/Mexico_City').format("DD/MMMM HH:mm"))
-    // data.push(previous.value)
+    let baseline = []
 
     historical.forEach(element => {
-
-      // if (previous.value == element.value && labels.length > 1) {
-      //   labels.pop()
-      //   data.pop()
-      // }
-
       labels.push(moment(element.date).tz('America/Mexico_City').format("D/MMM HH") + 'h')
       data.push(element.value)
+      baseline.push(threshold)
     });
 
     // Tail
     labels.push(moment(new Date()).tz('America/Mexico_City').format("D/MMM HH") + 'h')
     data.push(price)
+    baseline.push(threshold)
 
     let dataParam = {
       labels,
       datasets: [{
+        data: baseline,
+        stepped: true,
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.1)',
+      }, {
         data: data,
         stepped: true,
       }]
     };
 
-    const options = createOptions(originalPrice, price)
+    const options = createOptions(originalPrice, price < threshold ? price : threshold)
 
     return (
       <div className="w-full h-24 mt-10 divide-y divide-blue-200">

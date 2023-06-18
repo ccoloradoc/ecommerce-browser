@@ -6,7 +6,7 @@ import { getServerSession } from "next-auth/next"
 import useStore from "browser/state/store"
 import ItemService from 'browser/service/ItemService'
 
-export default function StorePage(props) {
+export default function BrandNew(props) {
   const { user } = props 
   const { syncState, filter, items, allItems } = useStore((state) => state)
   
@@ -57,19 +57,14 @@ export async function getServerSideProps({ req, res, query }) {
       redirect: { destination: "/signin" },
     };
   }
+  
+  const days = query.days || 5 
+  const today = new Date(); 
+  today.setDate(today.getDate() - days);
 
-  const { id } = query
-  const stores = await ItemService.findStores()
-
-  const isValidStore = stores.some(item => item.name.toLocaleLowerCase() == id.toLocaleLowerCase())
-
-  if (!isValidStore) {
-    return {
-      redirect: { destination: "/" },
-    };
-  }
-
-  const items = await ItemService.findItems({ source: id })
+  const items = await ItemService.findItems({ 
+    days: days
+  });
 
   return {
     props: {
@@ -82,11 +77,10 @@ export async function getServerSideProps({ req, res, query }) {
         super: false,
         price: true
       },
-      selectedStore: id,
       items: items.filter(item => item.available == true && item.alarm == true),
       allItems: items,
       query: {
-        source: id
+        days: days
       }
     }
   };

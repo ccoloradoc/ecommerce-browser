@@ -21,9 +21,15 @@ let initialState = {
 
 function filterItems(allItems, filters) {
     let items =  allItems
-        .filter(item =>  item.available == filters.available)
-        .filter(item =>  item.alarm == filters.alarm)
-        .filter(item =>  (item.title  || '').toLowerCase().indexOf(filters.text.toLowerCase()) >= 0)
+        .filter(item => {
+            return item.available == filters.available &&
+            item.alarm == filters.alarm && 
+            (item.title  || '').toLowerCase().indexOf(filters.text.toLowerCase()) >= 0
+
+        })
+        // .filter(item =>  item.available == filters.available)
+        // .filter(item =>  item.alarm == filters.alarm)
+        // .filter(item =>  (item.title  || '').toLowerCase().indexOf(filters.text.toLowerCase()) >= 0)
 
    
     if(filters.discount) {
@@ -55,8 +61,8 @@ function update(items, id, item) {
 
 const storeStore = create((set, get) => ({
     ...initialState,
-    updateFilter: async (params) => { 
-        console.log('filter', params)
+    updateFilter:  (params) => {
+        console.log('>> update filter', params)
         set(state => ({
             ...state,
             filter: {
@@ -68,16 +74,19 @@ const storeStore = create((set, get) => ({
                 ...params
             })
         }))
+        console.log('<< update filter', params)
     },
     syncState: async (params) => { 
+        console.log('sync', params)
         set(state => ({
             ...state,
             ...params
         }))
     },
-    saveItem: async (id, item) => {
+    saveItem: async (id, item, query) => {
         const savedItem = await ItemAPI.save(id, item)
-        const allItems = await ItemAPI.findItems({ source: savedItem.source})
+        console.log('saveItem', query)
+        const allItems = await ItemAPI.findItems(query)
         set(state => ({
             ...state,
             items: filterItems(allItems, state.filter),

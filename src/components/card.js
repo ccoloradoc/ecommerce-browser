@@ -71,7 +71,7 @@ function CardFooter({ availableAt, lastSubmitedAt, createdAt }) {
 
 export default function Card({ item }) {
     const { data: session } = useSession()
-    const { saveItem, updateItem } = useStore((state) => state)
+    const { saveItem, updateItem, query } = useStore((state) => state)
     const imageStyles = {
         backgroundImage: `url(${item.image})`,
         backgroundSize: "60%",
@@ -94,8 +94,13 @@ export default function Card({ item }) {
                             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path>
                         </svg>
                     </a>
+                    <a className="text-black hover:text-blue-500" href={`/item/${item.source}/${item.id}`} target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path>
+                        </svg>
+                    </a>
                     <Availability available={item.available} />
-                    <a className="text-black hover:text-blue-500" onClick={() => saveItem(item.id, { alarm: !item.alarm })}>
+                    <a className="text-black hover:text-blue-500" onClick={() => saveItem(item.id, { alarm: !item.alarm }, query)}>
                         <BellIcon on={item.alarm} />
                     </a>
                 </div>
@@ -113,8 +118,9 @@ export default function Card({ item }) {
                 <p className="text-center text-gray-800 mt-1">
                     <span className={item.price === item.originalPrice ? "hidden" : "line-through text-gray-500 mr-4"}>${item.originalPrice}</span>
                     ${item.price}
+                    <span className={"text-red-500 ml-4"}>${item.threshold}</span>
                 </p>
-                <div className="inline-flex items-center mt-2">
+                {/* <div className="inline-flex items-center mt-2">
                     <span className={`block uppercase text-xs rounded font-medium select-none  bg-blue-50 p-1.5 border-blue-500 border text-blue-700 mr-3`}>
                         {Math.ceil(100 - (item.threshold * 100 / item.originalPrice))}%
                     </span>
@@ -129,7 +135,7 @@ export default function Card({ item }) {
                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"></path>
                         </svg>
                     </button>
-                </div>
+                </div> */}
                 <LineGraph {...item} />
                 <CardFooter {...item} />
             </div>

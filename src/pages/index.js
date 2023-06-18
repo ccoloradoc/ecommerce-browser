@@ -15,8 +15,8 @@ export default function Example({ user, stores }) {
               <StackItem 
                 key={store.name}
                 title={store.name}
-                dek={`${store.count} monitored items`}
-                active={store.active}
+                dek={`Total: ${store.count} Alarm: ${store.alarmItems} Available: ${store.availableItems} Montored: ${store.monitoredItems}`}
+                active={store.lastAvailableAt}
                 link={`/store/${store.name.toLowerCase()}`}
                 />
             ))}

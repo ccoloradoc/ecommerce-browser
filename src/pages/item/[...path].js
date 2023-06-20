@@ -1,10 +1,10 @@
 import Navbar from 'browser/components/navbar'
 import LineGraph from "browser/components/line-graph"
+import TagList from "browser/components/tag-list"
 import { getServerSession } from "next-auth/next"
 import ItemService from 'browser/service/ItemService'
 import useItem from "browser/state/item"
 import { useEffect } from 'react';
-
 
 export default function Page({ initialItem, user }) {
 
@@ -12,25 +12,26 @@ export default function Page({ initialItem, user }) {
 
     useEffect(() => {
         syncState({
-          item: {
-            alarm: initialItem.alarm,
-            available: initialItem.available,
-            availableAt: initialItem.availableAt,
-            id: initialItem.id,
-            image: initialItem.image,
-            lastSubmitedAt: initialItem.lastSubmitedAt,
-            link: initialItem.link,
-            originalPrice: initialItem.originalPrice,
-            price: initialItem.price,
-            silent: initialItem.silent,
-            source: initialItem.source,
-            store: initialItem.store,
-            threshold: initialItem.threshold,
-            title: initialItem.title,
-            createdAt: initialItem.createdAt
-          }
+            item: {
+                alarm: initialItem.alarm,
+                available: initialItem.available,
+                availableAt: initialItem.availableAt,
+                id: initialItem.id,
+                image: initialItem.image,
+                lastSubmitedAt: initialItem.lastSubmitedAt,
+                link: initialItem.link,
+                originalPrice: initialItem.originalPrice,
+                price: initialItem.price,
+                silent: initialItem.silent,
+                source: initialItem.source,
+                store: initialItem.store,
+                threshold: initialItem.threshold,
+                title: initialItem.title,
+                createdAt: initialItem.createdAt,
+                tags: initialItem.tags
+            }
         })
-      }, []);
+    }, []);
 
     const imageStyles = {
         backgroundImage: `url(${item.image})`,
@@ -40,11 +41,22 @@ export default function Page({ initialItem, user }) {
     }
 
     const handleSubmit = (evt) => {
-
         evt.preventDefault();
         console.log('A name was submitted: ', item);
         saveItem(item.id, item)
     }
+
+    const addPill = (pill) => {
+        item.tags.push(pill)
+        updateItem("tags", item.tags)
+    };
+
+    const removePill = (pill) => {
+        if(item.tags == undefined) return;
+        const index = item.tags.indexOf(pill);
+        item.tags.splice(index, 1);
+        updateItem("tags", item.tags)
+    };
 
     return (
         <>
@@ -74,6 +86,9 @@ export default function Page({ initialItem, user }) {
                                 <LineGraph {...initialItem} />
                             </div>
                             <div className="p-4 flex flex-col items-center">
+                                <div className="w-full px-3">
+                                    <TagList tags={item.tags || initialItem.tags} addTag={addPill} removePill={removePill} />
+                                </div>
                                 <form onSubmit={handleSubmit}>
                                     <div className="flex flex-wrap -mx-3 mb-6">
                                         <div className="w-full px-3 mb-6">
@@ -81,32 +96,32 @@ export default function Page({ initialItem, user }) {
                                                 Titulo
                                             </label>
                                             <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                                                id="title" name="title" type="text" placeholder="Jane" 
-                                                value={item.title} onChange={(evt) => updateItem(evt.target.name, evt.target.value)}/>
+                                                id="title" name="title" type="text" placeholder="Jane"
+                                                value={item.title} onChange={(evt) => updateItem(evt.target.name, evt.target.value)} />
                                         </div>
                                         <div className="w-full px-3 mb-6">
                                             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
                                                 Imagen
                                             </label>
                                             <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                                                id="image" name="image" type="text" placeholder="Jane" 
-                                                value={item.image}  onChange={(evt) => updateItem(evt.target.name, evt.target.value)}/>
+                                                id="image" name="image" type="text" placeholder="Jane"
+                                                value={item.image} onChange={(evt) => updateItem(evt.target.name, evt.target.value)} />
                                         </div>
                                         <div className="w-full px-3 mb-6">
                                             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
                                                 Link
                                             </label>
                                             <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                                                id="link" name="link" type="text" placeholder="Jane" 
-                                                value={item.link} onChange={(evt) => updateItem(evt.target.name, evt.target.value)}/>
+                                                id="link" name="link" type="text" placeholder="Jane"
+                                                value={item.link} onChange={(evt) => updateItem(evt.target.name, evt.target.value)} />
                                         </div>
                                         <div className="w-full px-3 mb-6">
                                             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
                                                 Store
                                             </label>
                                             <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                                                id="store" name="store" type="text" placeholder="Jane" 
-                                                value={item.store} onChange={(evt) => updateItem(evt.target.name, evt.target.value)}/>
+                                                id="store" name="store" type="text" placeholder="Jane"
+                                                value={item.store} onChange={(evt) => updateItem(evt.target.name, evt.target.value)} />
                                         </div>
                                     </div>
                                     <div className="flex flex-wrap -mx-3 mb-6">
@@ -115,40 +130,40 @@ export default function Page({ initialItem, user }) {
                                                 Original Price
                                             </label>
                                             <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                                                id="original-price" name="originalPrice" type="text" 
-                                                value={item.originalPrice} onChange={(evt) => updateItem(evt.target.name, evt.target.value)}/>
+                                                id="original-price" name="originalPrice" type="text"
+                                                value={item.originalPrice} onChange={(evt) => updateItem(evt.target.name, evt.target.value)} />
                                         </div>
                                         <div className="w-full md:w-1/3 px-3">
                                             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-last-name">
                                                 Current Price
                                             </label>
                                             <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                                id="price" name="price" type="text" 
-                                                value={item.price} onChange={(evt) => updateItem(evt.target.name, evt.target.value)}/>
+                                                id="price" name="price" type="text"
+                                                value={item.price} onChange={(evt) => updateItem(evt.target.name, evt.target.value)} />
                                         </div>
                                         <div className="w-full md:w-1/3 px-3">
                                             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-last-name">
                                                 Threshold
                                             </label>
                                             <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                                id="threshold" name="threshold" type="text" 
-                                                value={item.threshold} onChange={(evt) => updateItem(evt.target.name, evt.target.value)}/>
+                                                id="threshold" name="threshold" type="text"
+                                                value={item.threshold} onChange={(evt) => updateItem(evt.target.name, evt.target.value)} />
                                         </div>
                                     </div>
                                     <div className="flex flex-wrap -mx-3 mb-6">
                                         <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-                                            <input className="mr-2 leading-tight" type="checkbox" name="alarm" 
+                                            <input className="mr-2 leading-tight" type="checkbox" name="alarm"
                                                 checked={item.alarm} onChange={(evt) => updateItem(evt.target.name, evt.target.checked)} />
                                             <label htmlFor="default-checkbox" className="ml-2 text-sm font-medium text-gray-600">Alarm</label>
                                         </div>
                                         <div className="w-full md:w-1/3 px-3">
                                             <input className="mr-2 leading-tight" type="checkbox" name="available"
-                                            checked={item.available} onChange={(evt) => updateItem(evt.target.name, evt.target.checked)} />
+                                                checked={item.available} onChange={(evt) => updateItem(evt.target.name, evt.target.checked)} />
                                             <label htmlFor="default-checkbox" className="ml-2 text-sm font-medium text-gray-600">Available</label>
                                         </div>
                                         <div className="w-full md:w-1/3 px-3">
-                                            <input className="mr-2 leading-tight" type="checkbox"  name="silent"
-                                            checked={item.silent} onChange={(evt) => updateItem(evt.target.name, evt.target.checked)} />
+                                            <input className="mr-2 leading-tight" type="checkbox" name="silent"
+                                                checked={item.silent} onChange={(evt) => updateItem(evt.target.name, evt.target.checked)} />
                                             <label htmlFor="default-checkbox" className="ml-2 text-sm font-medium text-gray-600">Silent</label>
                                         </div>
                                     </div>
@@ -158,21 +173,21 @@ export default function Page({ initialItem, user }) {
                                                 Created
                                             </label>
                                             <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                                                id="created-at" type="text" name="createdAt" value={item.createdAt} onChange={(evt) => updateItem(evt.target.name, evt.target.value)}/>
+                                                id="created-at" type="text" name="createdAt" value={item.createdAt} onChange={(evt) => updateItem(evt.target.name, evt.target.value)} />
                                         </div>
                                         <div className="w-full md:w-1/3 px-3">
                                             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-last-name">
                                                 Available
                                             </label>
                                             <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                                id="available-at" type="text" name="availableAt" value={item.availableAt} onChange={(evt) => updateItem(evt.target.name, evt.target.value)}/>
+                                                id="available-at" type="text" name="availableAt" value={item.availableAt} onChange={(evt) => updateItem(evt.target.name, evt.target.value)} />
                                         </div>
                                         <div className="w-full md:w-1/3 px-3">
                                             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-last-name">
                                                 Submitted
                                             </label>
                                             <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                                id="submited-at" type="text" name="lastSubmitedAt" value={item.lastSubmitedAt} onChange={(evt) => updateItem(evt.target.name, evt.target.value)}/>
+                                                id="submited-at" type="text" name="lastSubmitedAt" value={item.lastSubmitedAt} onChange={(evt) => updateItem(evt.target.name, evt.target.value)} />
                                         </div>
                                     </div>
                                     <div className="flex items-center justify-between">
@@ -208,12 +223,15 @@ export async function getServerSideProps({ req, res, query }) {
         id: path[1]
     })
 
-    console.log(item)
+    console.log('Props',path,  item)
 
     return {
         props: {
             user: session.user,
-            initialItem: item
+            initialItem: {
+                ...item,
+                tags: item && item.tags ? item.tags : ["one"]
+            }
         }
     };
 }

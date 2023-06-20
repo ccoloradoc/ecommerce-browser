@@ -108,7 +108,8 @@ export default {
                 lastSubmitedAt: cleanDate(item.lastSubmitedAt || new Date()),
                 originalPrice: item.originalPrice,
                 silent: item.silent,
-                historical: []
+                historical: [],
+                tags: item.tags
             }
             if (item.historical) {
                 for (var j = 0; j < item.historical.length; j++) {

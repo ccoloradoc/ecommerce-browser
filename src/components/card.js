@@ -105,22 +105,31 @@ export default function Card({ item }) {
     }
 
     const copyToClipboard = (evt, item) => {
-        let discount = item.price < item.originalPrice ? ` con un descuento de ${100 - Math.floor((item.price * 100) / item.originalPrice)}%`: ''
+        let discount = item.price < item.originalPrice ? ` con un descuento de ${100 - Math.floor((item.price * 100) / item.originalPrice)}%` : ''
         let text = `El siguiente producto tiene un precio de $${item.price}${discount} ${item.title} en ${item.source}. \nPuedes encontrarlo en el link: ${item.link}`;
         navigator.clipboard.writeText(text)
-            .then(function() {
+            .then(function () {
                 console.log('Async: Copying to clipboard was successful!');
-            }, function(err) {
+            }, function (err) {
                 console.error('Async: Could not copy text: ', err);
             });
     }
 
+    let tags = item && item.tags ? item.tags : []
+    let pills = tags.map((tag, index) => {
+        return (
+            <span key={index} className="bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 mb-1 rounded-full flex mr-2 text-sm">
+                {tag}
+            </span>
+        )
+    })
+
     return (
         <div className="bg-white shadow rounded mb-3"
-                data-id={item.id}
-                data-title={item.title} 
-                data-price={item.price} 
-                data-original-price={item.originalPrice}>
+            data-id={item.id}
+            data-title={item.title}
+            data-price={item.price}
+            data-original-price={item.originalPrice}>
             <div className="p-4 flex flex-col">
                 <div className="flex justify-between">
                     <a className="text-black hover:text-blue-500" href={item.link} target="_blank">
@@ -154,6 +163,11 @@ export default function Card({ item }) {
                     </p>
                     <LineGraph {...item} />
                     <CardFooter {...item} />
+                    <div className="w-full mt-4">
+                        <div className="flex flex-wrap items-center">
+                            {pills}
+                        </div>
+                    </div>
                 </div>
             </div>
             <div className="p-4 flex flex-col">

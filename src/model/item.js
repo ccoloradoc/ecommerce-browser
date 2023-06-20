@@ -18,7 +18,8 @@ const itemSchema = mongoose.Schema({
 	threshold: Number,
 	availableAt: Date,
 	lastSubmitedAt: Date,
-	historical: Array
+	historical: Array,
+	tags: Array
 }, {
 	timestamps: true
 });

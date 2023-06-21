@@ -62,6 +62,11 @@ export default {
 
     findItems: async function (query) {
         const filter = {}
+        if(query.hasOwnProperty('title')) {
+            filter['title'] = {
+                $regex: new RegExp(query.title, "i")
+            }
+        }
         if(query.hasOwnProperty('source')) {
             filter['source'] = {
                 $regex: new RegExp(query.source, "i")
@@ -89,38 +94,39 @@ export default {
         let flatItems = []
         for (var i = 0; i < items.length; i++) {
             let item = items[i]
-            if (item.alarm == undefined) {
-                console.log(item)
-            }
-            let flatItem = {
-                id: item.id,
-                source: item.source,
-                available: item.available,
-                createdAt: cleanDate(item.createdAt),
-                image: item.image,
-                link: item.link,
-                price: item.price,
-                title: item.title + '',
-                store: item.store,
-                alarm: item.alarm || false,
-                availableAt: cleanDate(item.availableAt),
-                threshold: item.threshold || 0,
-                lastSubmitedAt: cleanDate(item.lastSubmitedAt || new Date()),
-                originalPrice: item.originalPrice,
-                silent: item.silent,
-                historical: [],
-                tags: item.tags
-            }
-            if (item.historical) {
-                for (var j = 0; j < item.historical.length; j++) {
-                    let pair = item.historical[j]
-                    flatItem.historical.push({
-                        date: cleanDate(pair.date),
-                        value: pair.value
-                    })
+            if (item.alarm == undefined || item.silent == undefined || item.originalPrice == undefined) {
+                // console.log('Error', item)
+            } else {
+                let flatItem = {
+                    id: item.id,
+                    source: item.source,
+                    available: item.available,
+                    createdAt: cleanDate(item.createdAt),
+                    image: item.image,
+                    link: item.link,
+                    price: item.price,
+                    title: item.title + '',
+                    store: item.store,
+                    alarm: item.alarm || false,
+                    availableAt: cleanDate(item.availableAt),
+                    threshold: item.threshold || 0,
+                    lastSubmitedAt: cleanDate(item.lastSubmitedAt || new Date()),
+                    originalPrice: item.originalPrice || 0,
+                    silent: item.silent,
+                    historical: [],
+                    tags: item.tags
                 }
+                if (item.historical) {
+                    for (var j = 0; j < item.historical.length; j++) {
+                        let pair = item.historical[j]
+                        flatItem.historical.push({
+                            date: cleanDate(pair.date),
+                            value: pair.value
+                        })
+                    }
+                }
+                flatItems.push(flatItem)
             }
-            flatItems.push(flatItem)
         }
 
         return flatItems;
